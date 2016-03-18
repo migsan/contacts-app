@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var mongojs = require('mongojs');
-var db = mongojs('contactlist', ['contactlist']);
+var db = mongojs('mongodb://admin:pass@ds011389.mlab.com:11389/mongotutdb', ['contactlist']);
 var bodyParser = require('body-parser');
 
 app.use(express.static(__dirname + '/public'));
@@ -64,7 +64,7 @@ app.put('/contactlist/:id', function(req, res) {
             name: req.body.name,
             email: req.body.email,
             number: req.body.number
-        }}, new: true}, 
+        }}, new: true},
         function(err, doc) {
             if (err) {
                 console.log(err);
