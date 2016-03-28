@@ -105,7 +105,7 @@ app.put('/contactlist/:id', function(req, res) {
     );
 });
 
-Config request on google auth
+// Config request on google auth
 app.get('/auth/google',
     passport.authenticate('google', { scope: [
         'https://www.googleapis.com/auth/plus.login',
