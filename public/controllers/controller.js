@@ -16,7 +16,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http) {
 
     $scope.addContact = function() {
         console.log('ng-click');
-        console.log($scope.contact);
         $http.post('/contactlist', $scope.contact)
             .success(function(res) {
                 console.log(res);
@@ -41,7 +40,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http) {
     };
 
     $scope.update = function() {
-        console.log($scope.contact._id);
         $http.put('/contactlist/' + $scope.contact._id, $scope.contact)
             .success(function(res) {
                 refresh();

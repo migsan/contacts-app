@@ -1,9 +1,12 @@
 var express = require('express');
 var mongojs = require('mongojs');
+var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var config = require('./oauth.js');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+var User = require('./user.js');
 
 var app = express();
 
@@ -11,11 +14,17 @@ var db = mongojs('mongodb://admin:pass@ds011389.mlab.com:11389/mongotutdb', ['co
 var port = process.env.PORT || 8000;
 
 // Serialize and deserialize
+// serialize and deserialize
 passport.serializeUser(function(user, done) {
-    done(null, user);
+  console.log('serializeUser: ' + user._id);
+  done(null, user._id);
 });
-passport.deserializeUser(function(obj, done) {
-    done(null, obj);
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user){
+    console.log(user);
+      if(!err) done(null, user);
+      else done(err, null);
+    });
 });
 
 // Passport config
@@ -32,7 +41,12 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'), function(req, res, next) {
+    console.log('req.originalUrl ' + req.originalUrl);
+    console.log('req.baseUrl ' + req.baseUrl);
+    console.log('req.path ' + req.path);
+    next();
+});
 app.use(bodyParser.json());
 
 console.log('Dirname: ' +__dirname);
@@ -46,7 +60,6 @@ app.get('/contactlist', function(req, res) {
             console.log(err);
             return false;
         }
-        console.log(docs);
         res.json(docs);
     });
 });
