@@ -1,10 +1,36 @@
 var express = require('express');
-var app = express();
 var mongojs = require('mongojs');
-var db = mongojs('mongodb://admin:pass@ds011389.mlab.com:11389/mongotutdb', ['contactlist']);
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var config = require('./oauth.js');
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
 
+var app = express();
+
+var db = mongojs('mongodb://admin:pass@ds011389.mlab.com:11389/mongotutdb', ['contactlist']);
 var port = process.env.PORT || 8000;
+
+// Serialize and deserialize
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+// Passport config
+passport.use(new GoogleStrategy({
+    clientID: config.google.clientID,
+    clientSecret: config.google.clientSecret,
+    callbackURL: config.google.callbackURL,
+    passReqToCallback: true
+    },
+    function(request, accessToken, refreshToken, profile, done) {
+        process.nextTick(function() {
+            return done(null, profile);
+        });
+    }
+));
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
@@ -78,6 +104,19 @@ app.put('/contactlist/:id', function(req, res) {
         }
     );
 });
+
+// Config request on google auth
+app.get('/auth/google',
+    passport.authenticate('google', { scope: [
+        'https://www.googleapis.com/auth/plus.login',
+        'https://www.googleapis.com/auth/plus.profile.emails.read'
+    ]}
+));
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    function(req, res) {
+        res.redirect('/');
+    });
 
 app.listen(port);
 console.log('Server up and running in port 8888');
