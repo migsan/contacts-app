@@ -13,7 +13,6 @@ var app = express();
 var db = mongojs('mongodb://admin:pass@ds011389.mlab.com:11389/mongotutdb', ['contactlist']);
 var port = process.env.PORT || 8000;
 
-// Serialize and deserialize
 // serialize and deserialize
 passport.serializeUser(function(user, done) {
   console.log('serializeUser: ' + user._id);
