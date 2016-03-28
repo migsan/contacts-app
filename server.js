@@ -119,4 +119,4 @@ app.get('/auth/google/callback',
     });
 
 app.listen(port);
-console.log('Server up and running in port 8888');
+console.log('Server up and running in port 8000');
