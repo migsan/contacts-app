@@ -115,7 +115,9 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     function(req, res) {
+        console.log('about to be redirected to "/"');
         res.redirect('/');
+        console.log('was redirected to "/"');
     });
 
 app.listen(port);
